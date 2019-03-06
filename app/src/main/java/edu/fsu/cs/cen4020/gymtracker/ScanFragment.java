@@ -108,7 +108,7 @@ public class ScanFragment extends Fragment {
         // Display correct information on toggle button
         // userFlag checks that the current user of the machine is not the signed in user and that CURR_USER is not null
         boolean userFlag = !map.get(CURR_USER).equals(FirebaseUid) && !map.get(CURR_USER).equals("null");
-        if (tbUsing.isChecked() && userFlag) {
+        if (/*tbUsing.isChecked() && */userFlag) {
             tbUsing.setClickable(false);
             Log.d(TAG, "set clickable to false -- different user using machine");
         } else {
@@ -122,7 +122,7 @@ public class ScanFragment extends Fragment {
     //Override to set Firebase to show that the machine they were previously scanning is no longer in use
     @Override
     public void onDetach() {
-        toggleButton(false);
+        toggleButton(false); //TODO:: only do this if the current user is the one who is using the machine
         super.onDetach();
     }
 }
