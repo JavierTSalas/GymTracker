@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             .build(),
                     RC_SIGN_IN);
         }else {
-            // For the e
+            // For the event that the user is already signed in
             Log.d(TAG,"currentUser is "+currentUser.getUid());
         }
 

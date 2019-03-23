@@ -4,6 +4,7 @@ package edu.fsu.cs.cen4020.gymtracker;
   3/3/2019 By Ben K. and Javier S.
  */
 
+import android.Manifest;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -23,8 +24,17 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.SetOptions;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.DexterBuilder;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.karumi.dexter.listener.single.DialogOnDeniedPermissionListener;
+import com.karumi.dexter.listener.single.PermissionListener;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ScanFragment extends Fragment {
@@ -48,6 +58,23 @@ public class ScanFragment extends Fragment {
         etScanID = view.findViewById(R.id.et_ScanID);
 
 
+        // Use Dexter to get permissions - As of API >=23 permissions should be dynamically requested as they are needed.
+        // Since this fragment will be in change of scanning, request camera permissions
+        PermissionListener dialogPermissionListener =
+                DialogOnDeniedPermissionListener.Builder
+                        .withContext(getContext())
+                        .withTitle("Camera permission")
+                        .withMessage("Camera permission is needed for scanning QR codes")
+                        .withButtonText(android.R.string.ok)
+                        .build();
+
+
+        Dexter.withActivity(getActivity())
+                .withPermission(Manifest.permission.CAMERA)
+                .withListener(dialogPermissionListener).check();
+
+
+        // Create a reference to our DB and update the ui
         final DocumentReference docRef = db.collection("gyms").document("anchor").collection("equipment").document(etScanID.getText().toString());
         docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override

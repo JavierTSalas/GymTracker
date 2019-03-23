@@ -30,6 +30,9 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
+    // For getting permissions - trust me this is easier
+    implementation 'com.karumi:dexter:5.0.0'
+
 
 
 
