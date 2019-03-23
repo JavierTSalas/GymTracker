@@ -5,16 +5,21 @@ package edu.fsu.cs.cen4020.gymtracker;
  */
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,25 +30,21 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.SetOptions;
 import com.karumi.dexter.Dexter;
-import com.karumi.dexter.DexterBuilder;
-import com.karumi.dexter.MultiplePermissionsReport;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.karumi.dexter.listener.single.DialogOnDeniedPermissionListener;
 import com.karumi.dexter.listener.single.PermissionListener;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ScanFragment extends Fragment {
 
     final private static String USED = "used";
     private final static String CURR_USER = "currentUser";
+    // Arbitrary number
+    public static final int REQ_CODE_SECOND_FRAGMENT = 342423;
     ToggleButton tbUsing;
-    TextView etScanID;
-    boolean usedByCurr = false;
+    Button bScan;
+    TextView tvEquipmentID;
     public static final String TAG = ScanFragment.class.getCanonicalName();
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     final String FirebaseUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -55,7 +56,8 @@ public class ScanFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_scan, container, false);
         tbUsing = view.findViewById(R.id.tb_Using);
-        etScanID = view.findViewById(R.id.et_ScanID);
+        bScan = view.findViewById(R.id.b_Scan);
+        tvEquipmentID = view.findViewById(R.id.tv_ScanID);
 
 
         // Use Dexter to get permissions - As of API >=23 permissions should be dynamically requested as they are needed.
@@ -63,6 +65,7 @@ public class ScanFragment extends Fragment {
         PermissionListener dialogPermissionListener =
                 DialogOnDeniedPermissionListener.Builder
                         .withContext(getContext())
+                        // Do not make these strings into resources, doesn't work for some reasone
                         .withTitle("Camera permission")
                         .withMessage("Camera permission is needed for scanning QR codes")
                         .withButtonText(android.R.string.ok)
@@ -75,7 +78,7 @@ public class ScanFragment extends Fragment {
 
 
         // Create a reference to our DB and update the ui
-        final DocumentReference docRef = db.collection("gyms").document("anchor").collection("equipment").document(etScanID.getText().toString());
+        final DocumentReference docRef = db.collection("gyms").document("anchor").collection("equipment").document(tvEquipmentID.getText().toString());
         docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot snapshot,
@@ -102,7 +105,40 @@ public class ScanFragment extends Fragment {
             }
         });
 
+        bScan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                CodeScanFragment fragment = new CodeScanFragment();
+                //This is required to communicate between two fragments. Similar to startActivityForResult
+                fragment.setTargetFragment(ScanFragment.this, ScanFragment.REQ_CODE_SECOND_FRAGMENT);
+
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction =
+                        fragmentManager.beginTransaction()
+                                .add(android.R.id.content, fragment).addToBackStack("CodeScan");
+                fragmentTransaction.commit();
+            }
+        });
+
         return view;
+    }
+
+
+    /**
+     * The callback from the CodeScanFragment
+     * @param intent Contains the QR code contents
+     */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == ScanFragment.REQ_CODE_SECOND_FRAGMENT) {
+                String secondFragmentData = intent.getStringExtra(CodeScanFragment.INTENT_KEY_SECOND_FRAGMENT_DATA);
+                tvEquipmentID.setText(secondFragmentData);
+            }
+        }
+
     }
 
     /***
@@ -112,7 +148,7 @@ public class ScanFragment extends Fragment {
     private void toggleButton(boolean checked) {
         // Check if in use
         // Send message to firebase
-        final DocumentReference docRef = db.collection("gyms").document("anchor").collection("equipment").document(etScanID.getText().toString());
+        final DocumentReference docRef = db.collection("gyms").document("anchor").collection("equipment").document(tvEquipmentID.getText().toString());
         // Make map for firebase
         Map<String, Object> data = new HashMap<>();
         data.put(USED, checked);

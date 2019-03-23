@@ -33,6 +33,9 @@ dependencies {
     // For getting permissions - trust me this is easier
     implementation 'com.karumi:dexter:5.0.0'
 
+    // For scanning QR Codes
+    implementation 'com.budiyev.android:code-scanner:2.1.0'
+
 
 
 
