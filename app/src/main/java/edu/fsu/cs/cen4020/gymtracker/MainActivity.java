@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -17,8 +18,14 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 
 import java.util.Arrays;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -26,7 +33,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final int RC_SIGN_IN = 123;
     private FirebaseAuth mAuth;
     private static final String TAG = MainActivity.class.getCanonicalName();
+    public static final String GYM_TAG= "gymID";
 
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    final String FirebaseUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
     public Toolbar toolbar;
 
@@ -68,11 +78,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         setContentView(R.layout.activity_main);
         mAuth = FirebaseAuth.getInstance();
 
 
         setupNavigation();
+
+        // If first time launch
+        // Open slider
+
 
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -90,9 +106,59 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                     new AuthUI.IdpConfig.PhoneBuilder().build()))
                             .build(),
                     RC_SIGN_IN);
+
         }else {
             // For the event that the user is already signed in
             Log.d(TAG,"currentUser is "+currentUser.getUid());
+
+            // If there is no gym
+            final DocumentReference docRef = db.collection("users").document(FirebaseUid);
+            docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                @Override
+                public void onEvent(@Nullable DocumentSnapshot snapshot,
+                                    @Nullable FirebaseFirestoreException e) {
+                    if (e != null) {
+                        Log.w(TAG, "Listen failed.", e);
+                        return;
+                    }
+
+                    if (snapshot != null && snapshot.exists()) {
+                        Log.d(TAG, "Current data: " + snapshot.getData());
+                        processGYMID(snapshot.getData());
+                    } else {
+                        Log.d(TAG, "Current data: null");
+                    }
+                }
+            });
+        }
+
+
+    }
+
+
+    /***
+     * Opens the gym fragment if there the user has a gym. Open a fragment to pick a gym if the user does not have a gym
+     * @param map Data from firebase in a map
+     */
+    private void processGYMID(Map<String, Object> map) {
+        String gymString = (String) map.get(GYM_TAG);
+        if (gymString != null) {
+            if (!gymString.isEmpty() && !gymString.equals("null")) {
+
+                // Add the GYM_TAG to a bundle
+                Bundle bundle = new Bundle();
+                bundle.putString(GYM_TAG, gymString);
+
+                // Open the gym fragment
+                navController.navigate(R.id.gymFragment,bundle);
+
+                Log.d(TAG, "User has already selected a gym:"+gymString);
+            } else {
+                // Open the gym fragment
+                navController.navigate(R.id.joinGymFragment);
+                Log.d(TAG, "Prompting user to select their gym");
+
+            }
         }
 
     }

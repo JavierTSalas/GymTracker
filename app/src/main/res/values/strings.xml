@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">GymTracker</string>
 
-    <string name ="navigation_drawer_open1">Open navigation drawer</string>
-    <string name ="navigation_drawer_close">Open navigation drawer</string>
+    <string name="navigation_drawer_open1">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Open navigation drawer</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="gym_default">User has joined a gym</string>
+    <string name="gym_join">Type the gym that you want to join</string>
 </resources>

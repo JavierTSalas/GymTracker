@@ -9,7 +9,17 @@
         android:id="@+id/homeFragment"
         android:name="edu.fsu.cs.cen4020.gymtracker.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_homeFragment_to_sliderPage12"
+            app:destination="@id/sliderPage1" />
+        <action
+            android:id="@+id/action_homeFragment_to_joinGymFragment"
+            app:destination="@id/joinGymFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_gymFragment"
+            app:destination="@id/gymFragment" />
+    </fragment>
     <fragment
         android:id="@+id/scanFragment"
         android:name="edu.fsu.cs.cen4020.gymtracker.ScanFragment"
@@ -20,10 +30,6 @@
             app:destination="@id/codeScanFragment"
             app:enterAnim="@anim/nav_default_pop_enter_anim"
             app:exitAnim="@anim/nav_default_pop_exit_anim" />
-        <argument
-            android:name="qr_code"
-            app:argType="string"
-            android:defaultValue="Default_Value_#1|0" />
     </fragment>
     <fragment
         android:id="@+id/codeScanFragment"
@@ -35,6 +41,7 @@
             app:destination="@id/scanFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
+            app:popUpToInclusive="true"
             app:popUpTo="@+id/scanFragment" />
     </fragment>
     <fragment
@@ -57,4 +64,60 @@
         android:label="fragment_log"
         android:name="edu.fsu.cs.cen4020.gymtracker.LogFragment"
         tools:layout="@layout/fragment_log" />
+
+    <fragment
+        android:id="@+id/sliderPage1"
+        android:name="edu.fsu.cs.cen4020.gymtracker.SliderPage1"
+        android:label="fragment_slider_page1"
+        tools:layout="@layout/fragment_slider_page1">
+        <action
+            android:id="@+id/action_sliderPage1_to_sliderPage2"
+            app:destination="@id/sliderPage2" />
+    </fragment>
+    <fragment
+        android:id="@+id/sliderPage2"
+        android:name="edu.fsu.cs.cen4020.gymtracker.SliderPage2"
+        android:label="fragment_slider_page2"
+        tools:layout="@layout/fragment_slider_page2">
+        <action
+            android:id="@+id/action_sliderPage2_to_sliderPage3"
+            app:destination="@id/sliderPage3" />
+    </fragment>
+    <fragment
+        android:id="@+id/sliderPage3"
+        android:name="edu.fsu.cs.cen4020.gymtracker.SliderPage3"
+        android:label="fragment_slider_page3"
+        tools:layout="@layout/fragment_slider_page3">
+        <action
+            android:id="@+id/action_sliderPage3_to_sliderPage4"
+            app:destination="@id/sliderPage4" />
+    </fragment>
+    <fragment
+        android:id="@+id/sliderPage4"
+        android:name="edu.fsu.cs.cen4020.gymtracker.SliderPage4"
+        android:label="fragment_slider_page4"
+        tools:layout="@layout/fragment_slider_page4">
+        <action
+            android:id="@+id/action_sliderPage4_to_homeFragment2"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@+id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/joinGymFragment"
+        android:name="edu.fsu.cs.cen4020.gymtracker.JoinGymFragment"
+        android:label="fragment_join_gym"
+        tools:layout="@layout/fragment_join_gym">
+        <action
+            android:id="@+id/action_joinGymFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_joinGymFragment_to_gymFragment"
+            app:destination="@id/gymFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/gymFragment"
+        android:name="edu.fsu.cs.cen4020.gymtracker.GymFragment"
+        android:label="fragment_gym"
+        tools:layout="@layout/fragment_gym" />
+
 </navigation>
