@@ -8,17 +8,16 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -61,11 +60,11 @@ public class ScanFragment extends Fragment {
 
 
         // Use Dexter to get permissions - As of API >=23 permissions should be dynamically requested as they are needed.
-        // Since this fragment will be in change of scanning, request camera permissions
+        // Since this fragment will be in charge of scanning, request camera permissions
         PermissionListener dialogPermissionListener =
                 DialogOnDeniedPermissionListener.Builder
                         .withContext(getContext())
-                        // Do not make these strings into resources, doesn't work for some reasone
+                        // Do not make these strings into resources, doesn't work for some reason
                         .withTitle("Camera permission")
                         .withMessage("Camera permission is needed for scanning QR codes")
                         .withButtonText(android.R.string.ok)
