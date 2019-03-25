@@ -7,9 +7,12 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import com.budiyev.android.codescanner.CodeScanner;
 import com.budiyev.android.codescanner.CodeScannerView;
@@ -18,6 +21,7 @@ import com.google.zxing.Result;
 
 public class CodeScanFragment extends Fragment {
     public static final String INTENT_KEY_SECOND_FRAGMENT_DATA = "CodeScanFragment";
+    public static final String INTENT_QR_CODE_KEY = "CodeScanFragment_QR_CODE";
     private CodeScanner mCodeScanner;
 
     @Nullable
@@ -25,7 +29,7 @@ public class CodeScanFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         final Activity activity = getActivity();
-        View root = inflater.inflate(R.layout.fragment_code_scanner, container, false);
+        final View root = inflater.inflate(R.layout.fragment_code_scanner, container, false);
         CodeScannerView scannerView = root.findViewById(R.id.scanner_view);
         mCodeScanner = new CodeScanner(activity, scannerView);
         mCodeScanner.setDecodeCallback(new DecodeCallback() {
@@ -35,15 +39,21 @@ public class CodeScanFragment extends Fragment {
                     @Override
                     public void run() {
 
-                        Intent intent = new Intent();
-                        intent.putExtra(CodeScanFragment.INTENT_KEY_SECOND_FRAGMENT_DATA, result.getText());
 
-                        // Send the data back
-                        Fragment fragment = getTargetFragment();
-                        fragment.onActivityResult(ScanFragment.REQ_CODE_SECOND_FRAGMENT, Activity.RESULT_OK, intent);
+
+
+//                        Intent intent = new Intent();
+//                        intent.putExtra(CodeScanFragment.INTENT_KEY_SECOND_FRAGMENT_DATA, qr_code);
+
+                        String qr_code = result.getText();
+
+
+                        Bundle bundle = new Bundle();
+                        bundle.putString(INTENT_QR_CODE_KEY, qr_code);
 
                         // Dismiss the fragment
-                        getActivity().getSupportFragmentManager().popBackStack();
+                        Navigation.findNavController(root).navigate(R.id.scanFragment,bundle);
+
                     }
                 });
             }

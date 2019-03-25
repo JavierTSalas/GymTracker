@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="edu.fsu.cs.cen4020.gymtracker.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" />
+    <fragment
+        android:id="@+id/scanFragment"
+        android:name="edu.fsu.cs.cen4020.gymtracker.ScanFragment"
+        android:label="fragment_scan"
+        tools:layout="@layout/fragment_scan" >
+        <action
+            android:id="@+id/action_scanFragment_to_codeScanFragment"
+            app:destination="@id/codeScanFragment"
+            app:enterAnim="@anim/nav_default_pop_enter_anim"
+            app:exitAnim="@anim/nav_default_pop_exit_anim" />
+        <argument
+            android:name="qr_code"
+            app:argType="string"
+            android:defaultValue="Default_Value_#1|0" />
+    </fragment>
+    <fragment
+        android:id="@+id/codeScanFragment"
+        android:name="edu.fsu.cs.cen4020.gymtracker.CodeScanFragment"
+        android:label="fragment_code_scanner"
+        tools:layout="@layout/fragment_code_scanner" >
+        <action
+            android:id="@+id/action_codeScanFragment_to_scanFragment"
+            app:destination="@id/scanFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popUpTo="@+id/scanFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/nutritionFragment"
+        android:name="edu.fsu.cs.cen4020.gymtracker.NutritionFragment"
+        android:label="fragment_nutrition"
+        tools:layout="@layout/fragment_nutrition" />
+    <fragment
+        android:id="@+id/calendarFragment"
+        android:name="edu.fsu.cs.cen4020.gymtracker.CalendarFragment"
+        android:label="fragment_calendar"
+        tools:layout="@layout/fragment_calendar" />
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="edu.fsu.cs.cen4020.gymtracker.SearchFragment"
+        android:label="fragment_search"
+        tools:layout="@layout/fragment_search" />
+    <fragment
+        android:id="@+id/logFragment"
+        android:label="fragment_log"
+        android:name="edu.fsu.cs.cen4020.gymtracker.LogFragment"
+        tools:layout="@layout/fragment_log" />
+</navigation>

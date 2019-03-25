@@ -8,11 +8,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +15,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.ToggleButton;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -48,6 +48,7 @@ public class ScanFragment extends Fragment {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     final String FirebaseUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
     private boolean userFlag;
+    private String QR_CODE;
 
     @Nullable
     @Override
@@ -57,6 +58,15 @@ public class ScanFragment extends Fragment {
         tbUsing = view.findViewById(R.id.tb_Using);
         bScan = view.findViewById(R.id.b_Scan);
         tvEquipmentID = view.findViewById(R.id.tv_ScanID);
+
+
+        // If we opened the fragment form the CodeScanFragment
+        Bundle argsFromCodeScanFragment = getArguments();
+        if (argsFromCodeScanFragment != null) {
+            QR_CODE = argsFromCodeScanFragment.getString(CodeScanFragment.INTENT_QR_CODE_KEY);
+            if (validQRCODE(QR_CODE)) tvEquipmentID.setText(QR_CODE);
+        }
+
 
 
         // Use Dexter to get permissions - As of API >=23 permissions should be dynamically requested as they are needed.
@@ -77,25 +87,28 @@ public class ScanFragment extends Fragment {
 
 
         // Create a reference to our DB and update the ui
-        final DocumentReference docRef = db.collection("gyms").document("anchor").collection("equipment").document(tvEquipmentID.getText().toString());
-        docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot snapshot,
-                                @Nullable FirebaseFirestoreException e) {
-                if (e != null) {
-                    Log.w(TAG, "Listen failed.", e);
-                    return;
-                }
+        if (validQRCODE(QR_CODE)) {
 
-                if (snapshot != null && snapshot.exists()) {
-                    Log.d(TAG, "Current data: " + snapshot.getData());
-                    updateView(snapshot.getData());
-                } else {
-                    Log.d(TAG, "Current data: null");
-                }
-            }
-        });
+            final DocumentReference docRef = db.collection("gyms").document("anchor").collection("equipment").document(QR_CODE);
+            docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                @Override
+                public void onEvent(@Nullable DocumentSnapshot snapshot,
+                                    @Nullable FirebaseFirestoreException e) {
+                    if (e != null) {
+                        Log.w(TAG, "Listen failed.", e);
+                        return;
+                    }
 
+                    if (snapshot != null && snapshot.exists()) {
+                        Log.d(TAG, "Current data: " + snapshot.getData());
+                        updateView(snapshot.getData());
+                    } else {
+                        Log.d(TAG, "Current data: null");
+                    }
+                }
+            });
+
+        }
 
         tbUsing.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,20 +120,17 @@ public class ScanFragment extends Fragment {
         bScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                CodeScanFragment fragment = new CodeScanFragment();
-                //This is required to communicate between two fragments. Similar to startActivityForResult
-                fragment.setTargetFragment(ScanFragment.this, ScanFragment.REQ_CODE_SECOND_FRAGMENT);
-
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction fragmentTransaction =
-                        fragmentManager.beginTransaction()
-                                .add(android.R.id.content, fragment).addToBackStack("CodeScan");
-                fragmentTransaction.commit();
+                Navigation.findNavController(view).navigate(R.id.codeScanFragment);
             }
         });
 
         return view;
+    }
+
+    private boolean validQRCODE(String qr_code) {
+        if (qr_code == null)
+            return false;
+        return qr_code.contains("|");
     }
 
 
