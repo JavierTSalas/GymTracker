@@ -8,4 +8,12 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="gym_default">User has joined a gym</string>
     <string name="gym_join">Type the gym that you want to join</string>
+    <string name="slide_1_title">GymTracker</string>
+    <string name="slide_1_desc">One sentence describing GymTracker</string>
+    <string name="slide_2_title">QR Code Scanning</string>
+    <string name="slide_2_desc">Easily identify a machine by scanning a QR Code</string>
+    <string name="slide_3_title">Logbook</string>
+    <string name="slide_3_desc">Log workouts in your logbook</string>
+    <string name="slide_4_title">Contact Gyms Directly</string>
+    <string name="slide_4_desc">You can use GymTracker to report broken equipment</string>
 </resources>

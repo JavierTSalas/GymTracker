@@ -46,7 +46,7 @@ public class ScanFragment extends Fragment {
     TextView tvEquipmentID;
     public static final String TAG = ScanFragment.class.getCanonicalName();
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-    final String FirebaseUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    String FirebaseUid;
     private boolean userFlag;
     private String QR_CODE;
 
@@ -58,7 +58,7 @@ public class ScanFragment extends Fragment {
         tbUsing = view.findViewById(R.id.tb_Using);
         bScan = view.findViewById(R.id.b_Scan);
         tvEquipmentID = view.findViewById(R.id.tv_ScanID);
-
+        FirebaseUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         // If we opened the fragment form the CodeScanFragment
         Bundle argsFromCodeScanFragment = getArguments();

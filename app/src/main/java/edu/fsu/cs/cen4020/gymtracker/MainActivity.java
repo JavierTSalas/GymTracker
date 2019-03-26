@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static final String GYM_TAG= "gymID";
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-    final String FirebaseUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    String FirebaseUid;
 
     public Toolbar toolbar;
 
@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView = findViewById(R.id.navigationView);
 
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+
 
         NavigationUI.setupActionBarWithNavController(this, navController, drawerLayout);
 
@@ -88,6 +89,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // If first time launch
         // Open slider
+        // Checking for first time launch - before calling setContentView()
+        PrefManager prefManager = new PrefManager(this);
+        if (prefManager.isFirstTimeLaunch()) {
+            prefManager.setFirstTimeLaunch(false);
+            navController.navigate(R.id.action_homeFragment_to_sliderPage12);
+            return;
+        }
 
 
         // Check if user is signed in (non-null) and update UI accordingly.
@@ -110,6 +118,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }else {
             // For the event that the user is already signed in
             Log.d(TAG,"currentUser is "+currentUser.getUid());
+
+            FirebaseUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
             // If there is no gym
             final DocumentReference docRef = db.collection("users").document(FirebaseUid);

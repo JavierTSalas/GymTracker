@@ -41,8 +41,8 @@
             app:destination="@id/scanFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
-            app:popUpToInclusive="true"
-            app:popUpTo="@+id/scanFragment" />
+            app:popUpTo="@+id/scanFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/nutritionFragment"
@@ -72,7 +72,9 @@
         tools:layout="@layout/fragment_slider_page1">
         <action
             android:id="@+id/action_sliderPage1_to_sliderPage2"
-            app:destination="@id/sliderPage2" />
+            app:destination="@id/sliderPage2"
+            app:enterAnim="@anim/fui_slide_in_right"
+            app:exitAnim="@anim/fui_slide_out_left" />
     </fragment>
     <fragment
         android:id="@+id/sliderPage2"
@@ -81,7 +83,9 @@
         tools:layout="@layout/fragment_slider_page2">
         <action
             android:id="@+id/action_sliderPage2_to_sliderPage3"
-            app:destination="@id/sliderPage3" />
+            app:destination="@id/sliderPage3"
+            app:enterAnim="@anim/fui_slide_in_right"
+            app:exitAnim="@anim/fui_slide_out_left" />
     </fragment>
     <fragment
         android:id="@+id/sliderPage3"
@@ -90,7 +94,9 @@
         tools:layout="@layout/fragment_slider_page3">
         <action
             android:id="@+id/action_sliderPage3_to_sliderPage4"
-            app:destination="@id/sliderPage4" />
+            app:destination="@id/sliderPage4"
+            app:enterAnim="@anim/fui_slide_in_right"
+            app:exitAnim="@anim/fui_slide_out_left" />
     </fragment>
     <fragment
         android:id="@+id/sliderPage4"
@@ -100,7 +106,9 @@
         <action
             android:id="@+id/action_sliderPage4_to_homeFragment2"
             app:destination="@id/homeFragment"
-            app:popUpTo="@+id/homeFragment" />
+            app:enterAnim="@anim/fui_slide_out_left"
+            app:popUpTo="@+id/homeFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/joinGymFragment"

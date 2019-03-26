@@ -42,7 +42,7 @@ public class CodeScanFragment extends Fragment {
                         bundle.putString(INTENT_QR_CODE_KEY, qr_code);
 
                         // Dismiss the fragment
-                        Navigation.findNavController(root).navigate(R.id.scanFragment,bundle);
+                        Navigation.findNavController(root).navigate(R.id.action_codeScanFragment_to_scanFragment,bundle);
 
                     }
                 });
