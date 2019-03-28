@@ -51,6 +51,7 @@ public class ScanFragment extends Fragment {
     private boolean userFlag;
     private String QR_CODE;
 
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
