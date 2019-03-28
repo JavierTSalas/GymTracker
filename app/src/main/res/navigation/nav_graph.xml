@@ -67,7 +67,7 @@
 
     <fragment
         android:id="@+id/sliderPage1"
-        android:name="edu.fsu.cs.cen4020.gymtracker.SliderPage1"
+        android:name="edu.fsu.cs.cen4020.gymtracker.slider.SliderPage1"
         android:label="fragment_slider_page1"
         tools:layout="@layout/fragment_slider_page1">
         <action
@@ -78,7 +78,7 @@
     </fragment>
     <fragment
         android:id="@+id/sliderPage2"
-        android:name="edu.fsu.cs.cen4020.gymtracker.SliderPage2"
+        android:name="edu.fsu.cs.cen4020.gymtracker.slider.SliderPage2"
         android:label="fragment_slider_page2"
         tools:layout="@layout/fragment_slider_page2">
         <action
@@ -89,7 +89,7 @@
     </fragment>
     <fragment
         android:id="@+id/sliderPage3"
-        android:name="edu.fsu.cs.cen4020.gymtracker.SliderPage3"
+        android:name="edu.fsu.cs.cen4020.gymtracker.slider.SliderPage3"
         android:label="fragment_slider_page3"
         tools:layout="@layout/fragment_slider_page3">
         <action
@@ -100,7 +100,7 @@
     </fragment>
     <fragment
         android:id="@+id/sliderPage4"
-        android:name="edu.fsu.cs.cen4020.gymtracker.SliderPage4"
+        android:name="edu.fsu.cs.cen4020.gymtracker.slider.SliderPage4"
         android:label="fragment_slider_page4"
         tools:layout="@layout/fragment_slider_page4">
         <action
