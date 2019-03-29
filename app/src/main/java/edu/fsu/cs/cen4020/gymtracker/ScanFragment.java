@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
@@ -72,6 +73,7 @@ public class ScanFragment extends Fragment {
     };
     private int i = 0; //lol
 
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -86,7 +88,13 @@ public class ScanFragment extends Fragment {
         Bundle argsFromCodeScanFragment = getArguments();
         if (argsFromCodeScanFragment != null) {
             QR_CODE = argsFromCodeScanFragment.getString(CodeScanFragment.INTENT_QR_CODE_KEY);
-            if (validQRCODE(QR_CODE)) tvEquipmentID.setText(QR_CODE);
+            if (validQRCODE(QR_CODE))
+            {
+                // Do something with the QR code,
+                tvEquipmentID.setText(QR_CODE);
+            } else {
+                Toast.makeText(getContext(), "Invalid QR Code, scan only GymTracker QR Codes", Toast.LENGTH_LONG).show();
+            }
         }
 
 
@@ -135,6 +143,7 @@ public class ScanFragment extends Fragment {
         tbUsing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (validQRCODE(QR_CODE))
                 toggleButton(tbUsing.isChecked());
             }
         });

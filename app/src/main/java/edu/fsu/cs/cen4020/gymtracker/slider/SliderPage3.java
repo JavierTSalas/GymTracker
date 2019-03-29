@@ -1,8 +1,5 @@
-package edu.fsu.cs.cen4020.gymtracker;
+package edu.fsu.cs.cen4020.gymtracker.slider;
 
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -13,26 +10,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import edu.fsu.cs.cen4020.gymtracker.R;
 
-public class SliderPage4 extends Fragment {
 
-    private Button bSlider4;
+public class SliderPage3 extends Fragment {
+
+
+    private Button bSlider3;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View root = inflater.inflate(R.layout.fragment_slider_page4, container, false);
-        bSlider4= root.findViewById(R.id.bSlider4);
-        bSlider4.setOnClickListener(new View.OnClickListener() {
+        View root = inflater.inflate(R.layout.fragment_slider_page3, container, false);
+        bSlider3= root.findViewById(R.id.bSlider3);
+        bSlider3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent mIntent = getActivity().getIntent();
-                getActivity().finish();
-                startActivity(mIntent);
+                Navigation.findNavController(view).navigate(R.id.action_sliderPage3_to_sliderPage4);
             }
         });
         return root;
     }
+
 
 }

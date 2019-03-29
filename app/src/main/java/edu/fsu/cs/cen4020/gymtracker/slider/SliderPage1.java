@@ -1,4 +1,4 @@
-package edu.fsu.cs.cen4020.gymtracker;
+package edu.fsu.cs.cen4020.gymtracker.slider;
 
 
 import android.os.Bundle;
@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import edu.fsu.cs.cen4020.gymtracker.R;
 
 
 public class SliderPage1 extends Fragment {

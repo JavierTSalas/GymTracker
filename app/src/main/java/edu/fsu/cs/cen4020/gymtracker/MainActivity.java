@@ -117,9 +117,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         }else {
             // For the event that the user is already signed in
-            Log.d(TAG,"currentUser is "+currentUser.getUid());
+            FirebaseUid = currentUser.getUid();
+            Log.d(TAG,"currentUser is "+FirebaseUid);
 
-            FirebaseUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
             // If there is no gym
             final DocumentReference docRef = db.collection("users").document(FirebaseUid);

@@ -50,6 +50,10 @@ dependencies {
     implementation "android.arch.navigation:navigation-fragment:$nav_version"
     implementation "android.arch.navigation:navigation-ui:$nav_version"
 
+    // Recycler view
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+
 }
 
 apply plugin: 'com.google.gms.google-services'
