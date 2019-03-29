@@ -7,12 +7,16 @@ package edu.fsu.cs.cen4020.gymtracker;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.TestLooperManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.HorizontalScrollView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -49,6 +53,24 @@ public class ScanFragment extends Fragment {
     String FirebaseUid;
     private boolean userFlag;
     private String QR_CODE;
+    private String[] urlSuffixes = {
+            "neck",
+            "traps",
+            "shoulders",
+            "chest",
+            "biceps",
+            "forearms",
+            "abs",
+            "quadriceps",
+            "calves",
+            "triceps",
+            "lats",
+            "middle-back",
+            "lower-back",
+            "glutes",
+            "hamstrings"
+    };
+    private int i = 0; //lol
 
     @Nullable
     @Override
@@ -128,6 +150,7 @@ public class ScanFragment extends Fragment {
     }
 
     private boolean validQRCODE(String qr_code) {
+        //TODO::we should prob check this with a regex lol -Ben
         if (qr_code == null)
             return false;
         return qr_code.contains("|");
@@ -188,6 +211,7 @@ public class ScanFragment extends Fragment {
             tbUsing.setClickable(true);
             Log.d(TAG, "set clickable to true -- current or no user using machine");
         }
+        showExerciseTags();
         tbUsing.setChecked((boolean) map.get(USED));
 
     }
@@ -197,5 +221,45 @@ public class ScanFragment extends Fragment {
     public void onDetach() {
         if(!userFlag) toggleButton(false);
         super.onDetach();
+    }
+
+    private void showExerciseTags(){
+        QR_CODE = "Bench_Press_#1|0001000001000000";
+        if(!validQRCODE(QR_CODE))
+            return;
+        String[] split = QR_CODE.split("\\|");
+        Log.d(TAG, "[0]:"+split[0]+"[1]:"+split[1]);
+        HorizontalScrollView tagContainer = getView().findViewById(R.id.tag_container);
+        tagContainer.removeAllViews();
+        LinearLayout linearLayout = new LinearLayout(getContext());
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+
+        TextView textView = new TextView(getContext());
+        textView.setText("This machine hits: ");
+        linearLayout.addView(textView);
+
+        for(i = 0; i < split[1].length(); i++){
+            Log.d(TAG, "  "+split[1].charAt(i));
+            if(split[1].charAt(i) == '1'){
+                Log.d(TAG, "adding button for " + urlSuffixes[i]);
+                Button b = new Button(getContext());
+                b.setText(urlSuffixes[i]);
+                //String url = getResources().getString(R.string.bodybuilding_url).concat(urlSuffixes[i]);
+                b.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent openBrowser = new Intent(Intent.ACTION_VIEW);
+                        Button button = (Button)v;
+                        String url = getResources().getString(R.string.bodybuilding_url).concat(button.getText().toString());
+                        openBrowser.setData(Uri.parse(url));
+                        startActivity(openBrowser);
+                    }
+                });
+                linearLayout.addView(b);
+            }
+        }
+
+        tagContainer.addView(linearLayout);
+
     }
 }
