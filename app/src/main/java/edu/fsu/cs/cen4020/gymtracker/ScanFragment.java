@@ -146,8 +146,9 @@ public class ScanFragment extends Fragment {
         tbUsing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                QR_CODE = "Bench_Press_#1|0001111111000000"; //TODO:: delete
                 if (validQRCODE(QR_CODE))
-                toggleButton(tbUsing.isChecked());
+                    toggleButton(tbUsing.isChecked());
             }
         });
 
@@ -236,7 +237,7 @@ public class ScanFragment extends Fragment {
     }
 
     private void showExerciseTags(){
-        QR_CODE = "Bench_Press_#1|0001000001000000"; //TODO:: delete
+
         if(!validQRCODE(QR_CODE))
             return;
         String[] split = QR_CODE.split("\\|");
@@ -246,9 +247,6 @@ public class ScanFragment extends Fragment {
         LinearLayout linearLayout = new LinearLayout(getContext());
         linearLayout.setOrientation(LinearLayout.HORIZONTAL);
 
-        TextView textView = new TextView(getContext());
-        textView.setText("This machine hits: ");
-        linearLayout.addView(textView);
 
         for(i = 0; i < split[1].length(); i++){
             Log.d(TAG, "  "+split[1].charAt(i));
