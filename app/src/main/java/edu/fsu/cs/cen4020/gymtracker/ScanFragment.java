@@ -72,27 +72,30 @@ public class ScanFragment extends Fragment {
             "hamstrings"
     };
     private int i = 0; //lol
-
+    private View view;
+    private HorizontalScrollView tagContainer;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_scan, container, false);
+        view = inflater.inflate(R.layout.fragment_scan, container, false);
         tbUsing = view.findViewById(R.id.tb_Using);
         bScan = view.findViewById(R.id.b_Scan);
         tvEquipmentID = view.findViewById(R.id.tv_ScanID);
         FirebaseUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        tagContainer = view.findViewById(R.id.tag_container);
 
         // If we opened the fragment form the CodeScanFragment
         Bundle argsFromCodeScanFragment = getArguments();
-        if (argsFromCodeScanFragment != null) {
+        if (argsFromCodeScanFragment.getString(CodeScanFragment.INTENT_QR_CODE_KEY) != null) {
             QR_CODE = argsFromCodeScanFragment.getString(CodeScanFragment.INTENT_QR_CODE_KEY);
             if (validQRCODE(QR_CODE))
             {
                 // Do something with the QR code,
                 tvEquipmentID.setText(QR_CODE);
             } else {
+                Log.d(TAG, QR_CODE);
                 Toast.makeText(getContext(), "Invalid QR Code, scan only GymTracker QR Codes", Toast.LENGTH_LONG).show();
             }
         }
@@ -233,15 +236,15 @@ public class ScanFragment extends Fragment {
     }
 
     private void showExerciseTags(){
-        QR_CODE = "Bench_Press_#1|0001000001000000";
+        QR_CODE = "Bench_Press_#1|0001000001000000"; //TODO:: delete
         if(!validQRCODE(QR_CODE))
             return;
         String[] split = QR_CODE.split("\\|");
         Log.d(TAG, "[0]:"+split[0]+"[1]:"+split[1]);
-        HorizontalScrollView tagContainer = getView().findViewById(R.id.tag_container);
+
         tagContainer.removeAllViews();
         LinearLayout linearLayout = new LinearLayout(getContext());
-        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        linearLayout.setOrientation(LinearLayout.HORIZONTAL);
 
         TextView textView = new TextView(getContext());
         textView.setText("This machine hits: ");
