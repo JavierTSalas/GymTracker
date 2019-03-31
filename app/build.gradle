@@ -54,6 +54,13 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
 
+    // For picasso - Used for fetching url and displaying in imageview
+    implementation 'com.squareup.picasso:picasso:2.71828'
+
+    implementation ("com.github.bumptech.glide:glide:4.9.0") {
+        exclude group: "com.android.support"
+    }
+
 }
 
 apply plugin: 'com.google.gms.google-services'

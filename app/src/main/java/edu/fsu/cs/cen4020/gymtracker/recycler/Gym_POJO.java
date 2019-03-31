@@ -1,6 +1,9 @@
 package edu.fsu.cs.cen4020.gymtracker.recycler;
 
 
+import java.io.Serializable;
+import java.util.Map;
+
 public class Gym_POJO {
     public String city;
     public String icon_url;
@@ -17,6 +20,18 @@ public class Gym_POJO {
         this.street_address = street_address;
         this.zipcode = zipcode;
         this.document_id = document_id;
+    }
+
+    public Gym_POJO(Map<String, Object> data, String documentId) {
+        this.city = (String) data.get("city");
+        this.icon_url = (String) data.get("icon_url");
+        this.name = (String) data.get("name");
+        this.state = (String) data.get("state");
+        this.street_address = (String) data.get("street_address");
+        this.zipcode = (String) data.get("zipcode");
+        this.document_id = documentId;
+        ;
+
     }
 
     public String getDocument_id() {

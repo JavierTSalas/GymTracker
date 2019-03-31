@@ -71,7 +71,6 @@ public class ScanFragment extends Fragment {
             "glutes",
             "hamstrings"
     };
-    private int i = 0; //lol
     private View view;
     private HorizontalScrollView tagContainer;
 
@@ -241,16 +240,18 @@ public class ScanFragment extends Fragment {
         if(!validQRCODE(QR_CODE))
             return;
         String[] split = QR_CODE.split("\\|");
-        Log.d(TAG, "[0]:"+split[0]+"[1]:"+split[1]);
+        String bitmask = split[1];
+        Log.d(TAG, "[0]:"+split[0]+"[1]:"+ bitmask);
 
         tagContainer.removeAllViews();
         LinearLayout linearLayout = new LinearLayout(getContext());
         linearLayout.setOrientation(LinearLayout.HORIZONTAL);
 
 
-        for(i = 0; i < split[1].length(); i++){
-            Log.d(TAG, "  "+split[1].charAt(i));
-            if(split[1].charAt(i) == '1'){
+        int i;
+        for(i = 0; i < bitmask.length() && i < 15; i++){
+            Log.d(TAG, "  "+ bitmask.charAt(i));
+            if(bitmask.charAt(i) == '1'){
                 Log.d(TAG, "adding button for " + urlSuffixes[i]);
                 Button b = new Button(getContext());
                 b.setText(urlSuffixes[i]);

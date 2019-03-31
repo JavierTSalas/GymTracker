@@ -1,6 +1,5 @@
 package edu.fsu.cs.cen4020.gymtracker;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -56,7 +55,7 @@ public class JoinGymFragment extends Fragment {
         final View root = inflater.inflate(R.layout.fragment_join_gym, container, false);
         tvGymTitle =root.findViewById(R.id.tv_gymTitle);
 
-        recyclerView = (RecyclerView) root.findViewById(R.id.recyclerView);
+        recyclerView = (RecyclerView) root.findViewById(R.id.rv_gym_annoucements);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         gymArrayList = new ArrayList<>();
         adapter = new GymAdapter(getContext(), gymArrayList);
@@ -92,8 +91,7 @@ public class JoinGymFragment extends Fragment {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Map<String, Object> data = document.getData();
                                 Log.d(TAG, document.getId() + " => " + document.getData());
-                                gymArrayList.add(new Gym_POJO((String) data.get("city"), (String) data.get("icon_url"), (String) data.get("name")
-                                        , (String) data.get("state"), (String) data.get("street_address"), (String) data.get("zipcode"), document.getId()));
+                                gymArrayList.add(new Gym_POJO(data,document.getId()));
                                 adapter.notifyDataSetChanged();
                             }
 

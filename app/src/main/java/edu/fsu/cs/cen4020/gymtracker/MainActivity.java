@@ -1,8 +1,10 @@
 package edu.fsu.cs.cen4020.gymtracker;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -50,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void setupNavigation() {
 
         toolbar = findViewById(R.id.toolbar);
+        toolbar.setVisibility(View.GONE);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -65,6 +68,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         NavigationUI.setupWithNavController(navigationView, navController);
 
+        getSupportActionBar().hide();
+
         navigationView.setNavigationItemSelectedListener(this);
 
     }
@@ -79,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
 
         setContentView(R.layout.activity_main);
@@ -133,10 +139,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
 
                     if (snapshot != null && snapshot.exists()) {
-                        Log.d(TAG, "Current data: " + snapshot.getData());
+                        Log.d(TAG, "snapshot data: " + snapshot.getData());
+                        // Attempt to process the data just fetched from firebase
                         processGYMID(snapshot.getData());
                     } else {
-                        Log.d(TAG, "Current data: null");
+                        Log.d(TAG, "data error: null");
                     }
                 }
             });
@@ -165,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Log.d(TAG, "User has already selected a gym:"+gymString);
             } else {
                 // Open the gym fragment
-                navController.navigate(R.id.joinGymFragment);
+                navController.navigate(R.id.action_homeFragment_to_joinGymFragment);
                 Log.d(TAG, "Prompting user to select their gym");
 
             }

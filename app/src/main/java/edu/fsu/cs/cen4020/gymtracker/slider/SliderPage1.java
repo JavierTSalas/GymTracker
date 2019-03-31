@@ -27,7 +27,7 @@ public class SliderPage1 extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_slider_page1, container, false);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
+//        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
         bSlider1= root.findViewById(R.id.bSlider1);
         bSlider1.setOnClickListener(new View.OnClickListener() {
             @Override
