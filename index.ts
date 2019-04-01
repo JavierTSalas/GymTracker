@@ -35,6 +35,7 @@ function writeUserData(userId : any) {
 
     var data = {
         '_ID': userId,
+		'gymID': 'null',
     };
 
 
