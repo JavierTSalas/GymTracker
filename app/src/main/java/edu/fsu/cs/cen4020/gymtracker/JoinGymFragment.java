@@ -43,6 +43,7 @@ public class JoinGymFragment extends Fragment {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     final String FirebaseUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
     public static final String TAG = JoinGymFragment.class.getCanonicalName();
+    private View root;
 
     public JoinGymFragment() {
         // Required empty public constructor
@@ -52,13 +53,15 @@ public class JoinGymFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View root = inflater.inflate(R.layout.fragment_join_gym, container, false);
+        root = inflater.inflate(R.layout.fragment_join_gym, container, false);
         tvGymTitle =root.findViewById(R.id.tv_gymTitle);
 
-        recyclerView = (RecyclerView) root.findViewById(R.id.rv_gym_annoucements);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView = root.findViewById(R.id.recyclerView);
+
         gymArrayList = new ArrayList<>();
         adapter = new GymAdapter(getContext(), gymArrayList);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
         recyclerView.setAdapter(adapter);
 
@@ -80,6 +83,7 @@ public class JoinGymFragment extends Fragment {
         updateRecyclerFromFirestore();
         return root;
     }
+
 
     private void updateRecyclerFromFirestore() {
         db.collection("gyms")

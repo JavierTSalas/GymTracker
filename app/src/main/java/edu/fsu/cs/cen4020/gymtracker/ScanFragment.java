@@ -145,7 +145,6 @@ public class ScanFragment extends Fragment {
         tbUsing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                QR_CODE = "Bench_Press_#1|0001111111000000"; //TODO:: delete
                 if (validQRCODE(QR_CODE))
                     toggleButton(tbUsing.isChecked());
             }
@@ -162,10 +161,7 @@ public class ScanFragment extends Fragment {
     }
 
     private boolean validQRCODE(String qr_code) {
-        //TODO::we should prob check this with a regex lol -Ben
-        if (qr_code == null)
-            return false;
-        return qr_code.contains("|");
+        return qr_code.matches("(.+)\\|[01]{16}\n");
     }
 
 

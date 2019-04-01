@@ -172,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Log.d(TAG, "User has already selected a gym:"+gymString);
             } else {
                 // Open the gym fragment
-                navController.navigate(R.id.action_homeFragment_to_joinGymFragment);
+                navController.navigate(R.id.joinGymFragment);
                 Log.d(TAG, "Prompting user to select their gym");
 
             }
