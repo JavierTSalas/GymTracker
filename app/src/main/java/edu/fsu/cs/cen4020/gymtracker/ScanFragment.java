@@ -82,7 +82,7 @@ public class ScanFragment extends Fragment {
         tbUsing = view.findViewById(R.id.tb_Using);
         bScan = view.findViewById(R.id.b_Scan);
         tvEquipmentID = view.findViewById(R.id.tv_ScanID);
-        FirebaseUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseUid = FirebaseAuth.getInstance().getCurrentUser().getUid(); //TODO: Verify that Uid exists
         tagContainer = view.findViewById(R.id.tag_container);
 
         // If we opened the fragment form the CodeScanFragment
@@ -161,7 +161,10 @@ public class ScanFragment extends Fragment {
     }
 
     private boolean validQRCODE(String qr_code) {
-        return qr_code.matches("(.+)\\|[01]{16}\n");
+        if (qr_code ==null){
+            return false;
+        }
+        return qr_code.matches("(.+)\\|[01]{16}");
     }
 
 

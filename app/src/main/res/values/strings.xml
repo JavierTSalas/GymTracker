@@ -10,7 +10,7 @@
     <string name="gym_default">User has joined a gym</string>
     <string name="gym_join">Tap the gym that you want to join</string>
     <string name="slide_1_title">GymTracker</string>
-    <string name="slide_1_desc">One sentence describing GymTracker</string>
+    <string name="slide_1_desc">GymTracker is an all-in-one app for tracking fitness and gym management solutions</string>
     <string name="slide_2_title">QR Code Scanning</string>
     <string name="slide_2_desc">Easily identify a machine by scanning a QR Code</string>
     <string name="slide_3_title">Logbook</string>
