@@ -54,7 +54,11 @@ exports.updateEquipmentLogs = functions.firestore.document('/gyms/{gym}/equipmen
 					}
 					var logData = doc.data();
 					if(logData){
-						logData[equipmentID] = logData[equipmentID]+1;
+						if(logData[equipmentID] == undefined){
+							logData[equipmentID] = 1;
+						} else {
+							logData[equipmentID] = logData[equipmentID]+1;
+						}
 						var set_doc = log_ref.set(logData, {merge: true});
 						console.log(set_doc);
 					}
