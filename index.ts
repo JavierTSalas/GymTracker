@@ -31,6 +31,66 @@ exports.extractFromAuthToTable = functions.auth.user().onCreate((user) => {
 
 });
 
+exports.updateEquipmentLogs = functions.firestore.document('/gyms/{gym}/equipment/{equipmentID}')
+	.onUpdate((change, context) => {
+		if(change && change.after && change.after.data && change.before && change.before.data){
+		  const date = new Date();
+		  const equipmentID = context.params.equipmentID;
+		  const data = change.after.data();
+		  const prevData = change.before.data();
+		  if(data && prevData){
+			  if(data.used != true && prevData.used != false){
+				  return null;
+			  }
+			  
+			  console.log('Equipment Usage Detected', context.params.gym, equipmentID);
+			  var log_ref = db.collection('gyms').doc(context.params.gym).collection('logs').doc(getFormattedDate(date));
+			  var getDoc = log_ref.get()
+				.then(doc => {
+					if(!doc.exists) {
+						console.log('no such document 999');
+					} else {
+						console.log('doc data: ', doc.data());
+					}
+					var logData = doc.data();
+					if(logData){
+						logData[equipmentID] = logData[equipmentID]+1;
+						var set_doc = log_ref.set(logData, {merge: true});
+						console.log(set_doc);
+					}
+					else{
+						type logDict = { [key: string]: number };
+						var newData: logDict = {};
+						newData[equipmentID] = 1;
+						var set_doc1 = log_ref.set(newData);
+						console.log(set_doc1);
+					}
+				})
+				.catch(err => {
+					console.log('Error getting document', err);
+				});
+				console.log(getDoc);
+			  
+			  
+			  return change.after.ref;
+		  }
+		  else { return null; }
+		}
+		else { return null }
+    });
+
+function getFormattedDate(date: Date){
+	var year = date.getFullYear();
+	
+	var month = (1+date.getMonth()).toString();
+	month = month.length > 1 ? month : '0' + month;
+
+	var day = date.getDate().toString();
+	day = day.length > 1 ? day : '0' + day;
+  
+	return month + day + year;
+}
+
 function writeUserData(userId : any) {
 
     var data = {
