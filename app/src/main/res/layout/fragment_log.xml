@@ -28,4 +28,12 @@
         android:layout_centerHorizontal="true"
         android:text="Edit Log" />
 
+    <TextView
+        android:id="@+id/logEntryTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editLogButton"
+        android:layout_centerHorizontal="true"
+        android:text="TextView" />
+
 </RelativeLayout>
