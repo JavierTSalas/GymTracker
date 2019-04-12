@@ -1,5 +1,7 @@
 package edu.fsu.cs.cen4020.gymtracker;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -8,12 +10,15 @@ import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CalendarView;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.io.File;
@@ -31,6 +36,7 @@ public class LogFragment extends Fragment {
     private TextView logTextView;
     private String currDate;
     private LogRepository db;
+    private boolean logExists; //here to be used in observer / on clicks -- careful referencing
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -46,6 +52,7 @@ public class LogFragment extends Fragment {
         calendar = view.findViewById(R.id.logCalendar);
         editButton = view.findViewById(R.id.editLogButton);
         logTextView = view.findViewById(R.id.logEntryTextView);
+        logTextView.setMovementMethod(new ScrollingMovementMethod());
 
         final Date date = new Date(calendar.getDate());
         LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate(); //TODO:: requires higher API than 26 -- discuss implications and solutions later w team
@@ -97,9 +104,49 @@ public class LogFragment extends Fragment {
     }
 
     private void editLog() {
-        //TODO:: database
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+        alertDialog.setTitle("Edit Log");
 
+        final EditText input = new EditText(getContext());
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+        input.setLayoutParams(lp);
+        alertDialog.setView(input);
 
-        //TODO:: show dialog with contents and allow for edit / save
+        logExists = false;
+        db.getLog(currDate).observe(getViewLifecycleOwner(), new Observer<LogEntry>() {
+            @Override
+            public void onChanged(LogEntry entry) {
+                if(entry != null) {
+                    input.setText(entry.getText());
+                    logExists = true;
+                }
+            }
+        });
+
+        alertDialog.setPositiveButton("Save",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(logExists){
+                            db.updateLog(currDate, input.getText().toString());
+                            Log.d(TAG, "update");
+                        }
+                        else{
+                            db.insertEntry(currDate, input.getText().toString());
+                            Log.d(TAG, "insert");
+                        }
+                        displayLog(currDate);
+                    }
+        });
+
+        alertDialog.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+        });
+
+        alertDialog.show();
     }
 }

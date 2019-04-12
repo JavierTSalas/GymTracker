@@ -6,7 +6,11 @@ package edu.fsu.cs.cen4020.gymtracker;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Person;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.TestLooperManager;
@@ -17,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -26,6 +31,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import com.google.api.Distribution;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -37,6 +43,8 @@ import com.karumi.dexter.Dexter;
 import com.karumi.dexter.listener.single.DialogOnDeniedPermissionListener;
 import com.karumi.dexter.listener.single.PermissionListener;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -73,6 +81,7 @@ public class ScanFragment extends Fragment {
     };
     private View view;
     private HorizontalScrollView tagContainer;
+    private Button logButton;
 
     @Nullable
     @Override
@@ -84,6 +93,7 @@ public class ScanFragment extends Fragment {
         tvEquipmentID = view.findViewById(R.id.tv_ScanID);
         FirebaseUid = FirebaseAuth.getInstance().getCurrentUser().getUid(); //TODO: Verify that Uid exists
         tagContainer = view.findViewById(R.id.tag_container);
+        logButton = view.findViewById(R.id.add_machine_to_log_button);
 
         // If we opened the fragment form the CodeScanFragment
         Bundle argsFromCodeScanFragment = getArguments();
@@ -157,6 +167,21 @@ public class ScanFragment extends Fragment {
             }
         });
 
+        logButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(!validQRCODE(QR_CODE)){
+                    Toast toast=Toast.makeText(getContext(),"No Valid Machine Scanned",Toast.LENGTH_SHORT);
+                    toast.setMargin(50,50);
+                    toast.show();
+                }
+                else{
+                    logWorkout();
+                }
+            }
+        });
+
         return view;
     }
 
@@ -222,6 +247,7 @@ public class ScanFragment extends Fragment {
             tbUsing.setClickable(true);
             Log.d(TAG, "set clickable to true -- current or no user using machine");
         }
+
         showExerciseTags();
         tbUsing.setChecked((boolean) map.get(USED));
 
@@ -271,5 +297,61 @@ public class ScanFragment extends Fragment {
 
         tagContainer.addView(linearLayout);
 
+    }
+
+    private void logWorkout() {
+        final NumberPicker repPicker = new NumberPicker(getActivity());
+        final NumberPicker setPicker = new NumberPicker(getActivity());
+        repPicker.setMinValue(1);
+        repPicker.setMaxValue(50);
+        setPicker.setMinValue(1);
+        setPicker.setMaxValue(15);
+        TextView chooseReps = new TextView(getContext());
+        TextView chooseSets = new TextView(getContext());
+        chooseReps.setText("# of Repetitions:");
+        chooseSets.setText("# of Sets");
+        chooseReps.setTextSize(20);
+        chooseSets.setTextSize(20);
+        chooseReps.setTextColor(Color.BLACK);
+        chooseSets.setTextColor(Color.BLACK);
+
+
+        LinearLayout linearLayout = new LinearLayout(getContext());
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        linearLayout.addView(chooseSets);
+        linearLayout.addView(setPicker);
+        linearLayout.addView(chooseReps);
+        linearLayout.addView(repPicker);
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Log Machine");
+        builder.setView(linearLayout);
+        builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                PersonalLogTextUtil.addExerciseToLog(getContext(),
+                        getViewLifecycleOwner(),
+                        buildDate(),
+                        PersonalLogTextUtil.removeTags(QR_CODE),
+                        setPicker.getValue(),
+                        repPicker.getValue());
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
+    private String buildDate(){
+        SimpleDateFormat sdf = new SimpleDateFormat("MMddyyyy");
+        Date dateObj = new Date();
+        return sdf.format(dateObj);
     }
 }

@@ -56,6 +56,13 @@ public class LogRepository {
         }.execute();
     }
 
+    public void updateLog(String date, String description){
+        LogEntry entry = new LogEntry();
+        entry.setLogDate(date);
+        entry.setText(description);
+        updateLog(entry);
+    }
+
     public void deleteTask(final String id) {
         final LiveData<LogEntry> log = getLog(id);
         if(log != null) {
