@@ -23,6 +23,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.Map;
 
+import static edu.fsu.cs.cen4020.gymtracker.JoinGymFragment.GYM_TAG;
+
 
 public class GymFragment extends Fragment {
     private String GYM_ID;
@@ -41,7 +43,7 @@ public class GymFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            GYM_ID = getArguments().getString(MainActivity.GYM_TAG);
+            GYM_ID = getArguments().getString(GYM_TAG);
         }
     }
 
@@ -52,11 +54,11 @@ public class GymFragment extends Fragment {
 //        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
         View root = inflater.inflate(R.layout.fragment_gym, container, false);
         tvTitle = root.findViewById(R.id.tv_gym_name);
-        tvTitle.setText(GYM_ID);
         ivGym = root.findViewById(R.id.iv_gym);
 
 
         // If there is no gym
+        Log.d(TAG,"Fetting gym_id="+GYM_ID);
         final DocumentReference docRef = db.collection("gyms").document(GYM_ID);
         docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override

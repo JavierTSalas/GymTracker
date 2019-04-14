@@ -14,9 +14,11 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -24,6 +26,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,8 +43,12 @@ public class JoinGymFragment extends Fragment {
     private ArrayList<Gym_POJO> gymArrayList;
 
 
+    // Choose an arbitrary request code value
+    public static final int RC_SIGN_IN = 123;
+    public static final String GYM_TAG = "gymID";
+
+
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-    final String FirebaseUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
     public static final String TAG = JoinGymFragment.class.getCanonicalName();
     private View root;
 
@@ -54,6 +61,25 @@ public class JoinGymFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         root = inflater.inflate(R.layout.fragment_join_gym, container, false);
+
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        // If there is no user
+        if (currentUser == null) {
+            Log.d(TAG, "currentUser is null, prompting for login");
+            startActivityForResult(
+                    AuthUI.getInstance()
+                            .createSignInIntentBuilder()
+                            .setLogo(R.drawable.gym_tracker_logo)
+                            .setAvailableProviders(Arrays.asList(
+                                    new AuthUI.IdpConfig.GoogleBuilder().build(),
+                                    new AuthUI.IdpConfig.EmailBuilder().build(),
+                                    new AuthUI.IdpConfig.PhoneBuilder().build()))
+                            .build(),
+                    RC_SIGN_IN);
+        }
+
+
         tvGymTitle =root.findViewById(R.id.tv_gymTitle);
 
         recyclerView = root.findViewById(R.id.recyclerView);
@@ -73,16 +99,40 @@ public class JoinGymFragment extends Fragment {
                 Log.d(TAG, "onItemClick position: " + position + " content=" + gymArrayList.get(position));
 
                 // Update to firebase
-                setGymInFirebase(gymArrayList.get(position).getDocument_id());
+                String docId = gymArrayList.get(position).getDocument_id();
+                setGymInFirebase(docId);
                 // Go back to home
-                Navigation.findNavController(root).navigate(R.id.homeFragment);
+                processGYMID(docId);
             }
 
 
         });
         updateRecyclerFromFirestore();
+
+
         return root;
     }
+
+    /***
+     * Opens the gym fragment if there the user has a gym. Open a fragment to pick a gym if the user does not have a gym
+     * @param gymString gym doc name
+     */
+    private void processGYMID(String gymString) {
+        if (gymString != null) {
+            if (!gymString.isEmpty() && !gymString.equals("null")) {
+
+                // Add the GYM_TAG to a bundle
+                Bundle bundle = new Bundle();
+                bundle.putString(GYM_TAG, gymString);
+
+
+                Navigation.findNavController(root).navigate(R.id.action_joinGymFragment_to_gymFragment, bundle);
+
+                Log.d(TAG, "User has already selected a gym:" + gymString);
+            }
+        }
+    }
+
 
 
     private void updateRecyclerFromFirestore() {
@@ -109,10 +159,10 @@ public class JoinGymFragment extends Fragment {
 
     private void setGymInFirebase(String text) {
         // Send message to firebase
-        final DocumentReference docRef = db.collection("users").document(FirebaseUid);
+        final DocumentReference docRef = db.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid());
         // Make map for firebase
         Map<String, Object> data = new HashMap<>();
-        data.put(MainActivity.GYM_TAG, text);
+        data.put(GYM_TAG, text);
         // Put the data
         docRef.set(data, SetOptions.merge());
         Log.d(TAG, "sending to FB" + data.toString());

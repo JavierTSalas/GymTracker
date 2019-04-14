@@ -29,13 +29,12 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import java.util.Arrays;
 import java.util.Map;
 
+import static edu.fsu.cs.cen4020.gymtracker.JoinGymFragment.GYM_TAG;
+import static edu.fsu.cs.cen4020.gymtracker.JoinGymFragment.RC_SIGN_IN;
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    // Choose an arbitrary request code value
-    private static final int RC_SIGN_IN = 123;
-    private FirebaseAuth mAuth;
     private static final String TAG = MainActivity.class.getCanonicalName();
-    public static final String GYM_TAG= "gymID";
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     String FirebaseUid;
@@ -88,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
         setContentView(R.layout.activity_main);
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
 
         setupNavigation();
@@ -179,6 +178,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
     }
+
+
+
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
