@@ -7,13 +7,11 @@ package edu.fsu.cs.cen4020.gymtracker;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Person;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.TestLooperManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,7 +29,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
-import com.google.api.Distribution;
+import com.airbnb.lottie.LottieAnimationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -79,7 +77,7 @@ public class ScanFragment extends Fragment {
             "glutes",
             "hamstrings"
     };
-    private View view;
+    private View root;
     private HorizontalScrollView tagContainer;
     private Button logButton;
 
@@ -87,13 +85,13 @@ public class ScanFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        view = inflater.inflate(R.layout.fragment_scan, container, false);
-        tbUsing = view.findViewById(R.id.tb_Using);
-        bScan = view.findViewById(R.id.b_Scan);
-        tvEquipmentID = view.findViewById(R.id.tv_ScanID);
+        root = inflater.inflate(R.layout.fragment_scan, container, false);
+        tbUsing = root.findViewById(R.id.tb_Using);
+        bScan = root.findViewById(R.id.b_Scan);
+        tvEquipmentID = root.findViewById(R.id.tv_ScanID);
         FirebaseUid = FirebaseAuth.getInstance().getCurrentUser().getUid(); //TODO: Verify that Uid exists
-        tagContainer = view.findViewById(R.id.tag_container);
-        logButton = view.findViewById(R.id.add_machine_to_log_button);
+        tagContainer = root.findViewById(R.id.tag_container);
+        logButton = root.findViewById(R.id.add_machine_to_log_button);
 
         // If we opened the fragment form the CodeScanFragment
         Bundle argsFromCodeScanFragment = getArguments();
@@ -102,7 +100,8 @@ public class ScanFragment extends Fragment {
             if (validQRCODE(QR_CODE))
             {
                 // Do something with the QR code,
-                tvEquipmentID.setText(QR_CODE);
+                tvEquipmentID.setText(PersonalLogTextUtil.removeTags(QR_CODE));
+
             } else {
                 Log.d(TAG, QR_CODE);
                 Toast.makeText(getContext(), "Invalid QR Code, scan only GymTracker QR Codes", Toast.LENGTH_LONG).show();
@@ -155,8 +154,13 @@ public class ScanFragment extends Fragment {
         tbUsing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (validQRCODE(QR_CODE))
+                if (validQRCODE(QR_CODE)) {
                     toggleButton(tbUsing.isChecked());
+                } else {
+                    // TODO: Use a better feedback
+                    tbUsing.setChecked(false);
+                    displayError();
+                }
             }
         });
 
@@ -172,9 +176,7 @@ public class ScanFragment extends Fragment {
             public void onClick(View v) {
 
                 if(!validQRCODE(QR_CODE)){
-                    Toast toast=Toast.makeText(getContext(),"No Valid Machine Scanned",Toast.LENGTH_SHORT);
-                    toast.setMargin(50,50);
-                    toast.show();
+                    displayError();
                 }
                 else{
                     logWorkout();
@@ -182,7 +184,20 @@ public class ScanFragment extends Fragment {
             }
         });
 
-        return view;
+
+        // For lottie - animations
+        LottieAnimationView animationView = (LottieAnimationView) root.findViewById(R.id.animation_view);
+        animationView.setAnimation("scan-qr.json");
+        animationView.playAnimation();
+
+
+        return root;
+    }
+
+    private void displayError() {
+        Toast toast = Toast.makeText(getContext(), "No Valid Machine Scanned", Toast.LENGTH_SHORT);
+        toast.setMargin(50, 50);
+        toast.show();
     }
 
     private boolean validQRCODE(String qr_code) {
@@ -203,7 +218,7 @@ public class ScanFragment extends Fragment {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == ScanFragment.REQ_CODE_SECOND_FRAGMENT) {
                 String secondFragmentData = intent.getStringExtra(CodeScanFragment.INTENT_KEY_SECOND_FRAGMENT_DATA);
-                tvEquipmentID.setText(secondFragmentData);
+                tvEquipmentID.setText(PersonalLogTextUtil.removeTags(secondFragmentData));
             }
         }
 

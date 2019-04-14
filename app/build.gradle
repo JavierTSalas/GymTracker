@@ -61,11 +61,18 @@ dependencies {
     // For picasso - Used for fetching url and displaying in imageview
     implementation 'com.squareup.picasso:picasso:2.71828'
 
+    // For glide - Used for fetching url and displaying in imageview
     implementation ("com.github.bumptech.glide:glide:4.9.0") {
         exclude group: "com.android.support"
     }
+
+    // For room - local database
     implementation 'androidx.room:room-runtime:2.0.0'
     annotationProcessor 'androidx.room:room-compiler:2.0.0'
+
+
+    // For lottie - animations (UI)
+    implementation 'com.airbnb.android:lottie:3.0.0'
 
 }
 
