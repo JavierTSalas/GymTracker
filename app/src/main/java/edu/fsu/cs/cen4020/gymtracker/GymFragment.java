@@ -132,7 +132,7 @@ public class GymFragment extends Fragment {
                         HashMap<String, Object> data = new HashMap<>();
                         data.put("date", now);
                         data.put("fixed", false);
-                        data.put("message", input.getText());
+                        data.put("message", input.getText().toString());
                         db.collection("gyms").document(GYM_ID).collection("reports").document(feedbackReference).set(data);
                     }
                 });
