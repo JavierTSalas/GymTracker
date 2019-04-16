@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -293,7 +294,10 @@ public class ScanFragment extends Fragment {
             Log.d(TAG, "  "+ bitmask.charAt(i));
             if(bitmask.charAt(i) == '1'){
                 Log.d(TAG, "adding button for " + urlSuffixes[i]);
-                Button b = new Button(getContext());
+
+                int buttonStyle = R.style.AppTheme_RoundedCornerMaterialButton;
+                Button b = new Button(new ContextThemeWrapper(getContext(), buttonStyle), null, buttonStyle);
+
                 b.setText(urlSuffixes[i]);
                 //String url = getResources().getString(R.string.bodybuilding_url).concat(urlSuffixes[i]);
                 b.setOnClickListener(new View.OnClickListener() {

@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -29,6 +30,7 @@ public class GymFragment extends Fragment {
     private String GYM_ID;
     TextView tvTitle;
     ImageView ivGym;
+    Button feedbackButton;
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     public static final String TAG = GymFragment.class.getCanonicalName();
@@ -54,7 +56,7 @@ public class GymFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_gym, container, false);
         tvTitle = root.findViewById(R.id.tv_gym_name);
         ivGym = root.findViewById(R.id.iv_gym);
-
+        feedbackButton = root.findViewById(R.id.feedback_button);
 
         // If there is no gym
         Log.d(TAG, "Fetching gym_id=" + GYM_ID);
@@ -88,6 +90,13 @@ public class GymFragment extends Fragment {
                 }
             });
         }
+
+        feedbackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO:: Javier stay away from here this is my workspace!!!!
+            }
+        });
 
         return root;
     }
