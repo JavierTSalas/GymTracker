@@ -148,6 +148,15 @@
                             <option name="y" value="810" />
                           </Point>
                         </option>
+                        <option name="myPositions">
+                          <map>
+                            <entry key="action_gymFragment_to_sliderPage1">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                          </map>
+                        </option>
                       </LayoutPositions>
                     </value>
                   </entry>
@@ -339,7 +348,7 @@
                         </option>
                         <option name="myPositions">
                           <map>
-                            <entry key="action_sliderPage4_to_homeFragment2">
+                            <entry key="action_sliderPage4_to_joinGymFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
