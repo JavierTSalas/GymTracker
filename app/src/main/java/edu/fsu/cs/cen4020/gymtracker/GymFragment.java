@@ -1,12 +1,16 @@
 package edu.fsu.cs.cen4020.gymtracker;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -20,7 +24,10 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firestore.v1beta1.WriteResult;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import static edu.fsu.cs.cen4020.gymtracker.JoinGymFragment.GYM_TAG;
@@ -31,6 +38,7 @@ public class GymFragment extends Fragment {
     TextView tvTitle;
     ImageView ivGym;
     Button feedbackButton;
+    private FirebaseAuth mAuth;
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     public static final String TAG = GymFragment.class.getCanonicalName();
@@ -60,11 +68,12 @@ public class GymFragment extends Fragment {
 
         // If there is no gym
         Log.d(TAG, "Fetching gym_id=" + GYM_ID);
+
+        mAuth = FirebaseAuth.getInstance();
         if (GYM_ID != null) {
             updateUI(GYM_ID);
         } else {
             // For the event that the user is already signed in
-            FirebaseAuth mAuth = FirebaseAuth.getInstance();
             String FirebaseUid = mAuth.getUid();
             Log.d(TAG, "currentUser is " + FirebaseUid);
 
@@ -94,11 +103,48 @@ public class GymFragment extends Fragment {
         feedbackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO:: Javier stay away from here this is my workspace!!!!
+
+                getFeedbackMessage();
+
             }
         });
 
         return root;
+    }
+
+    private void getFeedbackMessage() {
+        final Date now = new Date();
+        final String feedbackReference = mAuth.getUid() + now.toString();
+
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+        alertDialog.setTitle("Feedback");
+
+        final EditText input = new EditText(getContext());
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+        input.setLayoutParams(lp);
+        alertDialog.setView(input);
+
+        alertDialog.setPositiveButton("Save",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        HashMap<String, Object> data = new HashMap<>();
+                        data.put("date", now);
+                        data.put("fixed", false);
+                        data.put("message", input.getText());
+                        db.collection("gyms").document(GYM_ID).collection("reports").document(feedbackReference).set(data);
+                    }
+                });
+
+        alertDialog.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+        alertDialog.show();
     }
 
     private void updateUI(String GYM_ID) {
