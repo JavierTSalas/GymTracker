@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -24,7 +25,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firestore.v1beta1.WriteResult;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -37,8 +38,9 @@ public class GymFragment extends Fragment {
     private String GYM_ID;
     TextView tvTitle;
     ImageView ivGym;
-    Button feedbackButton;
-    private FirebaseAuth mAuth;
+    Button feedbackButton,joinGymFragment;
+    final private static String USED = "used";
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     public static final String TAG = GymFragment.class.getCanonicalName();
@@ -61,19 +63,19 @@ public class GymFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 //        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
-        View root = inflater.inflate(R.layout.fragment_gym, container, false);
+        final View root = inflater.inflate(R.layout.fragment_gym, container, false);
         tvTitle = root.findViewById(R.id.tv_gym_name);
         ivGym = root.findViewById(R.id.iv_gym);
         feedbackButton = root.findViewById(R.id.feedback_button);
+        joinGymFragment = root.findViewById(R.id.start_workout_button);
 
         // If there is no gym
         Log.d(TAG, "Fetching gym_id=" + GYM_ID);
-
-        mAuth = FirebaseAuth.getInstance();
         if (GYM_ID != null) {
             updateUI(GYM_ID);
         } else {
             // For the event that the user is already signed in
+            mAuth = FirebaseAuth.getInstance();
             String FirebaseUid = mAuth.getUid();
             Log.d(TAG, "currentUser is " + FirebaseUid);
 
@@ -108,8 +110,27 @@ public class GymFragment extends Fragment {
 
             }
         });
+        joinGymFragment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setDailyFlag(true);
+                setDailyFlag(false);
+                Navigation.findNavController(root).navigate(R.id.scanFragment);
+
+            }
+        });
 
         return root;
+    }
+
+
+    private void setDailyFlag(boolean b) {
+        final DocumentReference docRef = db.collection("gyms").document("anchor").collection("equipment").document("Daily");
+        // Make map for firebase
+        Map<String, Object> data = new HashMap<>();
+        data.put(USED,  b);
+        // Put the data
+        docRef.set(data, SetOptions.merge());
     }
 
     private void getFeedbackMessage() {
