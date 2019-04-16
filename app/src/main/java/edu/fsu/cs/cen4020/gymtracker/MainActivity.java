@@ -48,38 +48,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public NavigationView navigationView;
 
     // Setting Up One Time Navigation
-    private void setupNavigation() {
-
-        toolbar = findViewById(R.id.toolbar);
-        toolbar.setVisibility(View.GONE);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-        drawerLayout = findViewById(R.id.drawer_layout);
-
-        navigationView = findViewById(R.id.navigationView);
-
-        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-
-
-        NavigationUI.setupActionBarWithNavController(this, navController, drawerLayout);
-
-        NavigationUI.setupWithNavController(navigationView, navController);
-
-        getSupportActionBar().hide();
-
-        navigationView.setNavigationItemSelectedListener(this);
-
-    }
-
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        return NavigationUI.navigateUp(drawerLayout, Navigation.findNavController(this, R.id.nav_host_fragment));
-    }
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         PrefManager prefManager = new PrefManager(this);
         if (prefManager.isFirstTimeLaunch()) {
             prefManager.setFirstTimeLaunch(false);
-            navController.navigate(R.id.action_homeFragment_to_sliderPage12);
+            navController.navigate(R.id.action_gymFragment_to_sliderPage1);
             return;
         }
 
@@ -151,12 +119,44 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+    private void setupNavigation() {
+
+        toolbar = findViewById(R.id.toolbar);
+        toolbar.setVisibility(View.GONE);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        drawerLayout = findViewById(R.id.drawer_layout);
+
+        navigationView = findViewById(R.id.navigationView);
+
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+
+
+        NavigationUI.setupActionBarWithNavController(this, navController, drawerLayout);
+
+        NavigationUI.setupWithNavController(navigationView, navController);
+
+        getSupportActionBar().hide();
+
+        navigationView.setNavigationItemSelectedListener(this);
+
+    }
+
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        return NavigationUI.navigateUp(drawerLayout, Navigation.findNavController(this, R.id.nav_host_fragment));
+    }
+
+
 
     /***
      * Opens the gym fragment if there the user has a gym. Open a fragment to pick a gym if the user does not have a gym
      * @param map Data from firebase in a map
      */
-    private void processGYMID(Map<String, Object> map) {
+    public void processGYMID(Map<String, Object> map) {
         String gymString = (String) map.get(GYM_TAG);
         if (gymString != null) {
             if (!gymString.isEmpty() && !gymString.equals("null")) {
@@ -179,26 +179,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-
-
-
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.nav_home:
-                navController.navigate(R.id.homeFragment);
+                navController.navigate(R.id.gymFragment);
                 break;
             case R.id.nav_scan:
                 navController.navigate(R.id.scanFragment);
                 break;
             case R.id.nav_nutrition:
                 navController.navigate(R.id.nutritionFragment);
-                break;
-            case R.id.nav_calendar:
-                navController.navigate(R.id.calendarFragment);
-                break;
-            case R.id.nav_search:
-                navController.navigate(R.id.searchFragment);
                 break;
             case R.id.nav_log:
                 navController.navigate(R.id.logFragment);

@@ -5,7 +5,7 @@
 
         <item android:id ="@+id/nav_home"
             android:icon="@drawable/ic_home"
-            android:title="Home" />
+            android:title="Gym home" />
 
         <item android:id ="@+id/nav_scan"
         android:icon="@drawable/ic_scan"
@@ -15,16 +15,9 @@
             android:icon="@drawable/ic_nutrition"
             android:title="Nutrition" />
 
-        <item android:id ="@+id/nav_calendar"
-            android:icon="@drawable/ic_calendar"
-            android:title="Calendar" />
-
-        <item android:id ="@+id/nav_search"
-            android:icon="@drawable/ic_search"
-            android:title="Search a machine" />
 
         <item android:id ="@+id/nav_log"
-            android:icon="@drawable/ic_log"
+            android:icon="@drawable/ic_calendar"
             android:title="Personal Logbook" />
 
 

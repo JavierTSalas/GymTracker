@@ -1,6 +1,5 @@
 package edu.fsu.cs.cen4020.gymtracker;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,12 +13,12 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.squareup.picasso.Picasso;
 
 import java.util.Map;
 
@@ -58,7 +57,42 @@ public class GymFragment extends Fragment {
 
 
         // If there is no gym
-        Log.d(TAG,"Fetting gym_id="+GYM_ID);
+        Log.d(TAG, "Fetching gym_id=" + GYM_ID);
+        if (GYM_ID != null) {
+            updateUI(GYM_ID);
+        } else {
+            // For the event that the user is already signed in
+            FirebaseAuth mAuth = FirebaseAuth.getInstance();
+            String FirebaseUid = mAuth.getUid();
+            Log.d(TAG, "currentUser is " + FirebaseUid);
+
+
+            // If there is no gym
+            final DocumentReference docRef = db.collection("users").document(FirebaseUid);
+            docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                @Override
+                public void onEvent(@Nullable DocumentSnapshot snapshot,
+                                    @Nullable FirebaseFirestoreException e) {
+                    if (e != null) {
+                        Log.w(TAG, "Listen failed.", e);
+                        return;
+                    }
+
+                    if (snapshot != null && snapshot.exists()) {
+                        Log.d(TAG, "snapshot data: " + snapshot.getData());
+                        // Attempt to process the data just fetched from firebase
+                        processGYMID(snapshot.getData());
+                    } else {
+                        Log.d(TAG, "data error: null");
+                    }
+                }
+            });
+        }
+
+        return root;
+    }
+
+    private void updateUI(String GYM_ID) {
         final DocumentReference docRef = db.collection("gyms").document(GYM_ID);
         docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
@@ -78,9 +112,23 @@ public class GymFragment extends Fragment {
                 }
             }
         });
-
-        return root;
     }
+
+    /***
+     * Opens the gym fragment if there the user has a gym. Open a fragment to pick a gym if the user does not have a gym
+     * @param map Data from firebase in a map
+     */
+    public void processGYMID(Map<String, Object> map) {
+        String gymString = (String) map.get(GYM_TAG);
+        if (gymString != null) {
+            if (!gymString.isEmpty() && !gymString.equals("null")) {
+                Log.d(TAG, "User has already selected a gym:" + gymString);
+                updateUI(gymString);
+            }
+        }
+
+    }
+
 
     /***
      * Opens the gym fragment if there the user has a gym. Open a fragment to pick a gym if the user does not have a gym
