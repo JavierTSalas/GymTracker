@@ -3,6 +3,7 @@ package edu.fsu.cs.cen4020.gymtracker;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,20 +14,27 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,12 +44,11 @@ import static edu.fsu.cs.cen4020.gymtracker.JoinGymFragment.GYM_TAG;
 
 public class GymFragment extends Fragment {
     private String GYM_ID;
-    TextView tvTitle;
+    TextView tvTitle, tv_announcements;
     ImageView ivGym;
     Button feedbackButton,joinGymFragment;
     final private static String USED = "used";
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
-
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     public static final String TAG = GymFragment.class.getCanonicalName();
 
@@ -68,6 +75,9 @@ public class GymFragment extends Fragment {
         ivGym = root.findViewById(R.id.iv_gym);
         feedbackButton = root.findViewById(R.id.feedback_button);
         joinGymFragment = root.findViewById(R.id.start_workout_button);
+        tv_announcements = root.findViewById(R.id.tv_announcement_content);
+        tv_announcements.setMovementMethod(new ScrollingMovementMethod());
+
 
         // If there is no gym
         Log.d(TAG, "Fetching gym_id=" + GYM_ID);
@@ -80,6 +90,9 @@ public class GymFragment extends Fragment {
             Log.d(TAG, "currentUser is " + FirebaseUid);
 
 
+            if(FirebaseUid == null){
+                Log.d(TAG, "no uid!!");
+            }
             // If there is no gym
             final DocumentReference docRef = db.collection("users").document(FirebaseUid);
             docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
@@ -120,7 +133,54 @@ public class GymFragment extends Fragment {
             }
         });
 
+
+
         return root;
+    }
+
+    private void fillAnnouncements() {
+        ///gyms/anchor/notifications/3VzigG2UUH0tsbWDQeke
+        if(GYM_ID == null){
+            tv_announcements.setText("No Announcements Right Now.");
+            return;
+
+        }
+        db.collection("gyms").document(GYM_ID).collection("notifications")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            tv_announcements.setText("---------------------------------------\n");
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d(TAG, document.getId() + " => " + document.getData());
+                                Date start, end, now;
+                                String startStr, endStr;
+                                startStr = (String) document.getData().get("start_date");
+                                endStr = (String) document.getData().get("end_date");
+
+                                try {
+                                    start = sdf.parse(startStr);
+                                    end = sdf.parse(endStr);
+                                    now = new Date();
+                                    if(now.compareTo(start) > 0 && now.compareTo(end) < 0){
+                                        tv_announcements.setText(tv_announcements.getText().toString()+
+                                                document.getData().get("message") + "\n---------------------------------------\n");
+
+                                    }
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+
+
+                            }
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+
     }
 
 
@@ -183,11 +243,13 @@ public class GymFragment extends Fragment {
                     Log.d(TAG, "snapshot data: " + snapshot.getData());
                     // Attempt to process the data just fetched from firebase
                     processGymMap(snapshot.getData());
+                    fillAnnouncements();
                 } else {
                     Log.d(TAG, "data error: null");
                 }
             }
         });
+
     }
 
     /***
