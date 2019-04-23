@@ -133,15 +133,13 @@ public class GymFragment extends Fragment {
             }
         });
 
-
-
         return root;
     }
 
     private void fillAnnouncements() {
         ///gyms/anchor/notifications/3VzigG2UUH0tsbWDQeke
         if(GYM_ID == null){
-            tv_announcements.setText("No Announcements Right Now.");
+            tv_announcements.setText("Can't Find Any Announcements Right Now.");
             return;
 
         }
