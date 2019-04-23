@@ -1,6 +1,9 @@
 package edu.fsu.cs.cen4020.gymtracker;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -99,8 +102,23 @@ public class NutritionFragment extends Fragment {
                 Log.d(TAG, "onItemClick position: " + position + " content=" + mealArrayList.get(position));
 
                 // Update to firebase
-                String docId = mealArrayList.get(position).getDocument_id();
+                Meal_POJO meal = mealArrayList.get(position);
                 //TODO:: show meal
+                StringBuilder stringBuilder = new StringBuilder();
+
+                for (String line : meal.getContent().split("\\\\n")){
+                    stringBuilder.append("\n");
+                    stringBuilder.append(line.trim());
+                }
+
+
+                new AlertDialog.Builder(getContext())
+                        .setTitle(meal.getTitle())
+                        .setMessage(stringBuilder.toString())
+                        .setPositiveButton(android.R.string.ok, null)
+                        .show();
+
+
             }
 
 

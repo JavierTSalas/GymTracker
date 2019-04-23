@@ -8,17 +8,29 @@ public class Meal_POJO {
     public String title;
     public String description;
     public String document_id;
+    public String content;
 
-
-    public Meal_POJO(String title, String description, String document_id) {
-        this.title = title;
-        this.description = description;
-        this.document_id = document_id;
+    @Override
+    public String toString() {
+        return "Meal_POJO{" +
+                "title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", document_id='" + document_id + '\'' +
+                ", content='" + content + '\'' +
+                '}';
     }
 
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
     public Meal_POJO(Map<String, Object> data, String documentId) {
         this.title = (String) data.get("title");
         this.description = (String) data.get("description");
+        this.content = (String) data.get("content");
         this.document_id = documentId;
 
 
@@ -39,6 +51,9 @@ public class Meal_POJO {
     public void setTitle(String title) {
         this.title = title;
     }
+
+
+
     public String getDescription() {
         return description;
     }
@@ -48,14 +63,4 @@ public class Meal_POJO {
     }
 
 
-
-
-    @Override
-    public String toString() {
-        return "Meal_POJO{" +
-                "title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", document_id='" + document_id + '\'' +
-                '}';
-    }
 }
