@@ -29,8 +29,8 @@ public class Meal_POJO {
     }
     public Meal_POJO(Map<String, Object> data, String documentId) {
         this.title = (String) data.get("title");
-        this.description = (String) data.get("description");
-        this.content = (String) data.get("content");
+        this.description = ((String) data.get("description")).replace("<br />","\n");
+        this.content = ((String) data.get("content")).replace("<br />","\n");
         this.document_id = documentId;
 
 
